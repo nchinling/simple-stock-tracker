@@ -20,4 +20,24 @@ const authenticateLogin = async (name, email) => {
   }
 };
 
-export { authenticateLogin };
+const registerUser = async (name, email) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error registering user");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Registration failed:", error);
+    throw error;
+  }
+};
+
+export { authenticateLogin, registerUser };

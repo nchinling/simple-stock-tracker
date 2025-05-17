@@ -12,6 +12,7 @@ import { StockProvider } from "./contexts/StockContext";
 import TalkToServer from "./components/TalkToServer";
 import LoginPage from "./components/LoginPage";
 import StockPage from "./components/StockPage";
+import NewUser from "./components/NewUser";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./contexts/ProtectedRoute";
 
@@ -24,11 +25,10 @@ function App() {
       <AuthProvider>
         <Router>
           <StockProvider>
-            <Header title="Finance Dashboard" />
+            <Header title="Emerald Stock Tracker" />
             <Routes>
-              {/* Default route - Redirect to login if user is not authenticated */}
               <Route path="/" element={<LoginPage />} />
-              {/* <Route path="/dashboard" element={<StockPage />} /> */}
+              <Route path="/register" element={<NewUser />} />
               <Route
                 path="/dashboard"
                 element={

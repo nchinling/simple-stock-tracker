@@ -1,4 +1,4 @@
-.login-container {
+.new-user-container {
   max-width: 300px;
   margin: 50px auto;
   padding: 20px;
@@ -7,7 +7,7 @@
   text-align: center;
 }
 
-.login-container input {
+.new-user-container input {
   width: 80%;
   padding: 10px;
   margin: 10px 0;
@@ -15,7 +15,7 @@
   border: 1px solid #ccc;
 }
 
-.login-container button {
+.new-user-container button {
   width: 80%;
   padding: 10px;
   margin-top: 10px;
@@ -26,11 +26,11 @@
   cursor: pointer;
 }
 
-.login-container button:hover {
+.new-user-container button:hover {
   background-color: #0056b3;
 }
 
 .error-message {
-  color: #50c878;
+  color: black;
   margin-top: 10px;
 }

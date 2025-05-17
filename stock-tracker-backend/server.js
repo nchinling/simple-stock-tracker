@@ -96,6 +96,30 @@ app.post("/api/login", (req, res) => {
   );
 });
 
+//create new user
+app.post("/api/register", (req, res) => {
+  const { name, email } = req.body;
+
+  dbconn.query(
+    "INSERT INTO users (name, email) VALUES (?, ?)",
+    [name, email],
+    (err, result) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res
+            .status(409)
+            .json({ success: false, message: "Email already exists." });
+        }
+        return res
+          .status(500)
+          .json({ success: false, message: "Database error." });
+      }
+
+      res.json({ success: true, message: "User registered successfully!" });
+    }
+  );
+});
+
 // Start the server on port 3000
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

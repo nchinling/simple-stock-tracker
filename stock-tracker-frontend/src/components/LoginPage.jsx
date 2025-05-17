@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import NewUserPage from "./NewUserPage";
+import { useNavigate, Link } from "react-router-dom";
+import NewUser from "./NewUser";
 import "./styles/LoginPage.css";
 import { authenticateLogin } from "../service/db-service";
 
@@ -56,7 +56,9 @@ const LoginPage = () => {
       />
       <button onClick={handleLogin}>Login</button>
       {error && <p className="error-message">{error}</p>}
-      {/* <NewUserPage /> */}
+      <p>
+        Don't have an account? <Link to="/register">Sign up here</Link>
+      </p>
     </div>
   );
 };
