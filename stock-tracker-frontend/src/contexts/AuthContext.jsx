@@ -14,9 +14,9 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = (username) => {
-    setUser({ name: username });
-    localStorage.setItem("user", JSON.stringify({ name: username }));
+  const login = (userData) => {
+    setUser({ ...userData });
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   // Logout function
