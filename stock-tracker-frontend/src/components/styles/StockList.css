@@ -1,0 +1,26 @@
+.stock-list {
+  text-align: left;
+  margin: 1rem;
+}
+
+.stock-list .h2 {
+  text-align: left;
+  margin: 1rem;
+}
+
+.stock-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.stock-list th,
+.stock-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.stock-list th {
+  background-color: #f2f2f2;
+}

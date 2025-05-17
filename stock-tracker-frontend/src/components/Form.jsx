@@ -1,36 +1,44 @@
 import React, { useState, useContext } from "react";
-import { getPrice } from "../service/api-service";
+import { addStockTransaction } from "../service/db-service";
+import { AuthContext } from "../contexts/AuthContext";
 import { StockContext } from "../contexts/StockContext";
 import "./styles/Form.css";
 
 function Form() {
-  const [symbol, setSymbol] = useState(""); // Store stock symbol
-  const [price, setPrice] = useState(null); // Store price
-  const [quantity, setQuantity] = useState(""); // store quantity
-  const [purchasePrice, setPurchasePrice] = useState(""); // Store purchase price
-  const [error, setError] = useState(null); // Store error messages
-  const { addStock } = useContext(StockContext);
+  const { user } = useContext(AuthContext); // Access user from context
+  const [symbol, setSymbol] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [purchasePrice, setPurchasePrice] = useState("");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
+  const { setStockList } = useContext(StockContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
+    setSuccessMessage(null);
 
     try {
-      const data = await getPrice(symbol);
-      const newStock = {
+      const email = user.email; // from AuthContext
+
+      const response = await addStockTransaction(
+        email,
         symbol,
         quantity,
-        purchasePrice,
-        currentPrice: data.closing_price,
-      };
+        purchasePrice
+      );
 
-      //reset form fields
-      addStock(newStock);
+      if (response.success) {
+        setSuccessMessage("Stock transaction added successfully!");
+        setStockList(response.stocks); // update the stock list context here
+      }
+
       setSymbol("");
       setQuantity("");
       setPurchasePrice("");
     } catch (err) {
-      setError("Error fetching data. Please try again.");
+      setError("Error submitting transaction. Please try again.");
     }
   };
 
@@ -41,7 +49,6 @@ function Form() {
           <input
             type="text"
             placeholder="Stock Symbol"
-            name="stockSymbol"
             value={symbol}
             onChange={(event) => setSymbol(event.target.value)}
             required
@@ -50,9 +57,8 @@ function Form() {
 
         <label>
           <input
-            type="text"
+            type="number"
             placeholder="Quantity"
-            name="quantity"
             value={quantity}
             onChange={(event) => setQuantity(event.target.value)}
             required
@@ -61,9 +67,9 @@ function Form() {
 
         <label>
           <input
-            type="text"
+            type="number"
+            step="0.01"
             placeholder="Purchase Price"
-            name="purchasePrice"
             value={purchasePrice}
             onChange={(event) => setPurchasePrice(event.target.value)}
             required
@@ -73,13 +79,8 @@ function Form() {
         <button type="submit">Add Stock</button>
       </form>
 
-      {/* Display price */}
-      {price !== null && (
-        <div>
-          <h2>Latest Closing Price for {symbol.toUpperCase()}</h2>
-          <p>${price}</p>
-        </div>
-      )}
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
     </>
   );
 }

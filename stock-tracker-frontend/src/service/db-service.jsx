@@ -40,4 +40,68 @@ const registerUser = async (name, email) => {
   }
 };
 
-export { authenticateLogin, registerUser };
+const addStockTransaction = async (email, symbol, quantity, purchasePrice) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/data`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        symbol,
+        quantity,
+        purchasePrice,
+      }),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to add stock transaction");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+const getStocksWithTransactions = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/stocks/${userId}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch stock transactions.");
+    }
+
+    const data = await response.json();
+    return data.stocks; // Returns stock + transaction data
+  } catch (error) {
+    console.error("Error fetching stock transactions:", error);
+    throw error;
+  }
+};
+
+const fetchUserStocks = async (email) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/stocks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("API error:", error);
+    return { success: false };
+  }
+};
+
+export {
+  authenticateLogin,
+  registerUser,
+  addStockTransaction,
+  getStocksWithTransactions,
+  fetchUserStocks,
+};

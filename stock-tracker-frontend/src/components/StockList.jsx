@@ -1,5 +1,6 @@
 import { StockContext } from "../contexts/StockContext";
 import { useContext } from "react";
+import "./styles/StockList.css";
 
 function StockList({ title }) {
   const { stocks } = useContext(StockContext);

@@ -48,29 +48,6 @@ app.get("/form", (req, res) => {
   res.send("Form is sent");
 });
 
-app.get("/api/data", async (req, res) => {
-  const symbol = req.query.symbol || "IBM";
-  try {
-    const response = await axios.get(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${APIKEY}`
-    );
-
-    const timeSeries = response.data["Time Series (Daily)"];
-    const dates = Object.keys(timeSeries);
-    const latestDate = dates[0];
-    const latestClose = timeSeries[latestDate]["4. close"];
-
-    res.json({
-      symbol,
-      date: latestDate,
-      closing_price: latestClose,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch or process data" });
-  }
-});
-
 // login
 app.post("/api/login", (req, res) => {
   const { name, email } = req.body;
@@ -116,6 +93,110 @@ app.post("/api/register", (req, res) => {
       }
 
       res.json({ success: true, message: "User registered successfully!" });
+    }
+  );
+});
+
+app.post("/api/data", (req, res) => {
+  const { email, symbol, quantity, purchasePrice } = req.body;
+
+  dbconn.query(
+    "SELECT id FROM users WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err || results.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
+
+      const user_id = results[0].id;
+
+      // Insert into stocks
+      dbconn.query(
+        "INSERT INTO stocks (user_id, symbol) VALUES (?, ?)",
+        [user_id, symbol],
+        (err, stockResult) => {
+          if (err) {
+            return res
+              .status(500)
+              .json({ success: false, message: "Error inserting stock" });
+          }
+
+          const stockId = stockResult.insertId;
+
+          // Insert into transactions
+          dbconn.query(
+            "INSERT INTO transactions (stock_id, quantity, purchase_price) VALUES (?, ?, ?)",
+            [stockId, quantity, purchasePrice],
+            (err, transactionResult) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Error inserting transaction",
+                });
+              }
+
+              // Retrieve all stocks for user
+              dbconn.query(
+                `SELECT s.symbol, t.quantity, t.purchase_price AS purchasePrice
+                 FROM stocks s
+                 JOIN transactions t ON s.id = t.stock_id
+                 WHERE s.user_id = ?`,
+                [user_id],
+                (err, stockRows) => {
+                  if (err) {
+                    return res.status(500).json({
+                      success: false,
+                      message: "Error fetching stocks",
+                    });
+                  }
+
+                  // You can later calculate currentPrice & profit/loss in frontend or here
+                  res.json({
+                    success: true,
+                    stocks: stockRows,
+                  });
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+app.post("/api/stocks", (req, res) => {
+  const { email } = req.body;
+
+  dbconn.query(
+    "SELECT id FROM users WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err || results.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
+
+      const user_id = results[0].id;
+
+      const query = `
+      SELECT s.id AS stockId, s.symbol, t.quantity, t.purchase_price AS purchasePrice
+      FROM stocks s
+      JOIN transactions t ON s.id = t.stock_id
+      WHERE s.user_id = ?
+    `;
+      dbconn.query(query, [user_id], (err, stocks) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ success: false, message: "Failed to fetch stocks" });
+        }
+
+        res.json({ success: true, stocks });
+      });
     }
   );
 });
