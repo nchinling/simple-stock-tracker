@@ -2,7 +2,7 @@ const API_BASE_URL = "http://localhost:5000";
 
 const authenticateLogin = async (name, email) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email }),
@@ -22,7 +22,7 @@ const authenticateLogin = async (name, email) => {
 
 const registerUser = async (name, email) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/register`, {
+    const response = await fetch(`${API_BASE_URL}/api/user/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email }),
@@ -42,7 +42,7 @@ const registerUser = async (name, email) => {
 
 const addStockTransaction = async (email, symbol, quantity, purchasePrice) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/data`, {
+    const response = await fetch(`${API_BASE_URL}/api/stocks/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
