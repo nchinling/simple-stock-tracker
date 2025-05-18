@@ -4,6 +4,7 @@ import { useContext, useEffect } from "react";
 import { fetchUserStocks } from "../service/db-service";
 import Form from "./Form";
 import StockList from "./StockList";
+import "./styles/StockPage.css";
 
 const StockPage = () => {
   const { user, logout } = useContext(AuthContext);
@@ -29,12 +30,13 @@ const StockPage = () => {
   return (
     <div>
       <h2>Welcome, {user?.name}!</h2>
-      <p>This is your finance dashboard.</p>
+      <p>This is your dashboard.</p>
 
-      <h2>My Stocks</h2>
-      <Form />
-      <StockList title="My List" />
-      <button onClick={logout}>Logout</button>
+      <Form title="Enter a transaction" />
+      <StockList title="My Stocks List" />
+      <button className="logout-button" onClick={logout}>
+        Logout
+      </button>
     </div>
   );
 };

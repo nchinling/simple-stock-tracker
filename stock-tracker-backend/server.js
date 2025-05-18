@@ -201,6 +201,65 @@ app.post("/api/stocks", (req, res) => {
   );
 });
 
+//added delete button
+app.delete("/api/stocks/:stockId", (req, res) => {
+  const stockId = req.params.stockId;
+
+  // First delete the transaction(s) for this stock
+  dbconn.query(
+    "DELETE FROM transactions WHERE stock_id = ?",
+    [stockId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to delete transaction(s)",
+        });
+      }
+
+      // Now check if there are any remaining transactions for the stock
+      dbconn.query(
+        "SELECT * FROM transactions WHERE stock_id = ?",
+        [stockId],
+        (err, remainingTransactions) => {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              message: "Error checking remaining transactions",
+            });
+          }
+
+          if (remainingTransactions.length === 0) {
+            // No more transactions, delete the stock
+            dbconn.query(
+              "DELETE FROM stocks WHERE id = ?",
+              [stockId],
+              (err, stockResult) => {
+                if (err) {
+                  return res.status(500).json({
+                    success: false,
+                    message: "Failed to delete stock",
+                  });
+                }
+
+                return res.json({
+                  success: true,
+                  message: "Transaction and stock deleted",
+                });
+              }
+            );
+          } else {
+            return res.json({
+              success: true,
+              message: "Transaction(s) deleted, stock retained",
+            });
+          }
+        }
+      );
+    }
+  );
+});
+
 // Start the server on port 3000
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

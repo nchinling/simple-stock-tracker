@@ -20,7 +20,7 @@ const communicateWithServer = async () => {
     if (!response.ok) {
       throw new Error("Error communicating with the server");
     }
-    const message = await response.text(); // Since the response is plain text, use .text()
+    const message = await response.text();
     return message;
   } catch (error) {
     console.error("Error:", error);

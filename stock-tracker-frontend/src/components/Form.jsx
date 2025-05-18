@@ -4,8 +4,8 @@ import { AuthContext } from "../contexts/AuthContext";
 import { StockContext } from "../contexts/StockContext";
 import "./styles/Form.css";
 
-function Form() {
-  const { user } = useContext(AuthContext); // Access user from context
+function Form({ title }) {
+  const { user } = useContext(AuthContext);
   const [symbol, setSymbol] = useState("");
   const [quantity, setQuantity] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
@@ -20,7 +20,7 @@ function Form() {
     setSuccessMessage(null);
 
     try {
-      const email = user.email; // from AuthContext
+      const email = user.email;
 
       const response = await addStockTransaction(
         email,
@@ -31,7 +31,7 @@ function Form() {
 
       if (response.success) {
         setSuccessMessage("Stock transaction added successfully!");
-        setStockList(response.stocks); // update the stock list context here
+        setStockList(response.stocks); // update stock list
       }
 
       setSymbol("");
@@ -44,6 +44,7 @@ function Form() {
 
   return (
     <>
+      <h2 className="form-header">{title}</h2>
       <form className="form" onSubmit={handleSubmit}>
         <label>
           <input

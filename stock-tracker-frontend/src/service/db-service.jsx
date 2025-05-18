@@ -65,21 +65,21 @@ const addStockTransaction = async (email, symbol, quantity, purchasePrice) => {
   }
 };
 
-const getStocksWithTransactions = async (userId) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/stocks/${userId}`);
+// const getStocksWithTransactions = async (userId) => {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/api/stocks/${userId}`);
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch stock transactions.");
-    }
+//     if (!response.ok) {
+//       throw new Error("Failed to fetch stock transactions.");
+//     }
 
-    const data = await response.json();
-    return data.stocks; // Returns stock + transaction data
-  } catch (error) {
-    console.error("Error fetching stock transactions:", error);
-    throw error;
-  }
-};
+//     const data = await response.json();
+//     return data.stocks; // Returns stock + transaction data
+//   } catch (error) {
+//     console.error("Error fetching stock transactions:", error);
+//     throw error;
+//   }
+// };
 
 const fetchUserStocks = async (email) => {
   try {
@@ -98,10 +98,21 @@ const fetchUserStocks = async (email) => {
   }
 };
 
+// deleteStock api
+const deleteStock = async (stockId) => {
+  const response = await fetch(`${API_BASE_URL}/api/stocks/${stockId}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+  return data;
+};
+
 export {
   authenticateLogin,
   registerUser,
   addStockTransaction,
-  getStocksWithTransactions,
+  // getStocksWithTransactions,
   fetchUserStocks,
+  deleteStock,
 };

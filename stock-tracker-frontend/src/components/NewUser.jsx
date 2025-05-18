@@ -13,7 +13,7 @@ const NewUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError("");
 
     if (!name.trim() || !email.trim()) {
       setError("Both fields are required.");
