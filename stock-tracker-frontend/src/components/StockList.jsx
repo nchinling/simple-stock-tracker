@@ -4,7 +4,7 @@ import { deleteStock } from "../service/db-service";
 import "./styles/StockList.css";
 
 function StockList({ title }) {
-  const { stocks, setStockList } = useContext(StockContext);
+  const { stocks, setStocks } = useContext(StockContext);
 
   //add delete function
   const handleDelete = async (stockId) => {
@@ -18,12 +18,12 @@ function StockList({ title }) {
       if (response.success) {
         // Remove from UI
         const updatedList = stocks.filter((stock) => stock.stockId !== stockId);
-        setStockList(updatedList);
+        setStocks(updatedList);
       } else {
         alert(response.message);
       }
     } catch (err) {
-      alert("Error deleting stock.");
+      // alert("Error deleting stock.");
     }
   };
 

@@ -8,7 +8,7 @@ import "./styles/StockPage.css";
 
 const StockPage = () => {
   const { user, logout } = useContext(AuthContext);
-  const { setStockList } = useContext(StockContext);
+  const { setStocks } = useContext(StockContext);
 
   useEffect(() => {
     if (user?.email) {
@@ -16,7 +16,7 @@ const StockPage = () => {
       fetchUserStocks(user.email)
         .then((data) => {
           if (data.success) {
-            setStockList(data.stocks);
+            setStocks(data.stocks);
           } else {
             console.error("Failed to fetch stocks");
           }
@@ -25,7 +25,7 @@ const StockPage = () => {
           console.error("Error fetching stocks:", err);
         });
     }
-  }, [user?.email, setStockList]);
+  }, [user?.email, setStocks]);
 
   return (
     <div>
