@@ -1,12 +1,34 @@
 import { StockContext } from "../contexts/StockContext";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { deleteStock } from "../service/db-service";
 import "./styles/StockList.css";
+import TotalProfitOrLoss from "./TotalProfitOrLoss";
 
 function StockList({ title }) {
   const { stocks, setStockList } = useContext(StockContext);
+  const [totalProfitOrLoss, setTotalProfitOrLoss] = useState({});
 
-  //add delete function
+  useEffect(() => {
+    const calculateTotalPnL = () => {
+      let totalProfit = 0;
+      let totalCost = 0;
+      stocks.forEach((stock) => {
+        const { currentPrice, purchasePrice, quantity } = stock;
+        if (currentPrice != null && purchasePrice != null && quantity != null) {
+          totalProfit += (currentPrice - purchasePrice) * quantity;
+          totalCost += purchasePrice * quantity;
+        }
+      });
+      return {
+        profitOrLoss: totalProfit,
+        percentagePnL: (totalProfit / totalCost) * 100,
+      };
+    };
+
+    const total = calculateTotalPnL();
+    setTotalProfitOrLoss(total);
+  }, [stocks]);
+
   const handleDelete = async (stockId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this stock?"
@@ -30,6 +52,7 @@ function StockList({ title }) {
   return (
     <div className="stock-list">
       <h2>{title}</h2>
+      <TotalProfitOrLoss totalProfitOrLoss={totalProfitOrLoss} />
       {Array.isArray(stocks) && stocks.length > 0 ? (
         <table>
           <thead>

@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState } from "react";
+// import { useState } from "react";
 import "./App.css";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
@@ -18,7 +18,7 @@ import ProtectedRoute from "./contexts/ProtectedRoute";
 
 function App() {
   // const [count, setCount] = useState(0)
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   return (
     <>

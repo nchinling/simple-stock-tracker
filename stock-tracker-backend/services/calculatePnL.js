@@ -1,4 +1,4 @@
-function calculatePnL(stocks) {
+function calculateIndPnL(stocks) {
   return stocks.map((stock) => {
     // destructure
     const { currentPrice, purchasePrice, quantity } = stock;
@@ -19,4 +19,4 @@ function calculatePnL(stocks) {
   });
 }
 
-export default calculatePnL;
+export { calculateIndPnL };

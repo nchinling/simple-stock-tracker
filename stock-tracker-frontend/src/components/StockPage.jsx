@@ -33,7 +33,6 @@ const StockPage = () => {
     <div>
       <h2>Welcome, {user?.name}!</h2>
       <p>This is your dashboard.</p>
-
       <Form title="Enter a transaction" />
       <StockList title="My Stocks List" />
       <button className="logout-button" onClick={logout}>

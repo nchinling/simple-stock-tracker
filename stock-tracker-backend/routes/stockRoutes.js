@@ -3,7 +3,7 @@ const router = express.Router();
 
 import dbconn from "../config/db.js";
 import addStockListWithPrices from "../services/addStockPrices.js";
-import calculatePnL from "../services/calculatePnL.js";
+import { calculateIndPnL } from "../services/calculatePnL.js";
 
 // Fetch stocks
 router.post("/", (req, res) => {
@@ -30,9 +30,12 @@ router.post("/", (req, res) => {
     try {
       const stockListWithPrices = await addStockListWithPrices(stocks);
 
-      // Activity 2: Calculate PnL
-      const stockListWithPnLandPrices = calculatePnL(stockListWithPrices);
-      res.json({ success: true, stocks: stockListWithPnLandPrices });
+      // Activity 2: Calculate stock PnL
+      const stockListWithPnLandPrices = calculateIndPnL(stockListWithPrices);
+      res.json({
+        success: true,
+        stocks: stockListWithPnLandPrices,
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
