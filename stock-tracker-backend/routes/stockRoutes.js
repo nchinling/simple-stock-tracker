@@ -2,97 +2,72 @@
 const express = require("express");
 const router = express.Router();
 const dbconn = require("../config/db");
+const yahooFinance = require("yahoo-finance2").default;
 
 // Fetch stocks
 router.post("/", (req, res) => {
-  const { email } = req.body;
+  const { id } = req.body;
+  const user_id = id;
 
-  dbconn.query(
-    "SELECT id FROM users WHERE email = ?",
-    [email],
-    (err, results) => {
-      if (err || results.length === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
-      }
-
-      const user_id = results[0].id;
-
-      const query = `
+  const query = `
       SELECT s.id AS stockId, s.symbol, t.quantity, t.purchase_price AS purchasePrice
       FROM stocks s
       JOIN transactions t ON s.id = t.stock_id
       WHERE s.user_id = ?`;
 
-      dbconn.query(query, [user_id], (err, stocks) => {
-        if (err) {
-          return res
-            .status(500)
-            .json({ success: false, message: "Failed to fetch stocks" });
-        }
-
-        res.json({ success: true, stocks });
-      });
+  dbconn.query(query, [user_id], (err, stocks) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch stocks" });
     }
-  );
+
+    res.json({ success: true, stocks });
+  });
 });
 
 // Add stock
 router.post("/new", (req, res) => {
-  const { email, symbol, quantity, purchasePrice } = req.body;
-  console.log("I am inside /api/data");
+  const { id, symbol, quantity, purchasePrice } = req.body;
+  const user_id = id;
+
   dbconn.query(
-    "SELECT id FROM users WHERE email = ?",
-    [email],
-    (err, results) => {
-      if (err || results.length === 0) {
+    "INSERT INTO stocks (user_id, symbol) VALUES (?, ?)",
+    [user_id, symbol],
+    (err, stockResult) => {
+      if (err) {
         return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
+          .status(500)
+          .json({ success: false, message: "Error inserting stock" });
       }
 
-      const user_id = results[0].id;
+      const stockId = stockResult.insertId;
 
       dbconn.query(
-        "INSERT INTO stocks (user_id, symbol) VALUES (?, ?)",
-        [user_id, symbol],
-        (err, stockResult) => {
+        "INSERT INTO transactions (stock_id, quantity, purchase_price) VALUES (?, ?, ?)",
+        [stockId, quantity, purchasePrice],
+        (err) => {
           if (err) {
-            return res
-              .status(500)
-              .json({ success: false, message: "Error inserting stock" });
+            return res.status(500).json({
+              success: false,
+              message: "Error inserting transaction",
+            });
           }
 
-          const stockId = stockResult.insertId;
-
           dbconn.query(
-            "INSERT INTO transactions (stock_id, quantity, purchase_price) VALUES (?, ?, ?)",
-            [stockId, quantity, purchasePrice],
-            (err) => {
-              if (err) {
-                return res.status(500).json({
-                  success: false,
-                  message: "Error inserting transaction",
-                });
-              }
-
-              dbconn.query(
-                `SELECT s.symbol, t.quantity, t.purchase_price AS purchasePrice
+            `SELECT s.symbol, t.quantity, t.purchase_price AS purchasePrice
                  FROM stocks s
                  JOIN transactions t ON s.id = t.stock_id
                  WHERE s.user_id = ?`,
-                [user_id],
-                (err, stockRows) => {
-                  if (err) {
-                    return res.status(500).json({
-                      success: false,
-                      message: "Error fetching stocks",
-                    });
-                  }
-                  res.json({ success: true, stocks: stockRows });
-                }
-              );
+            [user_id],
+            (err, stockRows) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Error fetching stocks",
+                });
+              }
+              res.json({ success: true, stocks: stockRows });
             }
           );
         }
@@ -105,6 +80,7 @@ router.post("/new", (req, res) => {
 router.delete("/:stockId", (req, res) => {
   const stockId = req.params.stockId;
 
+  console.log(`Stock id is ${stockId}`);
   dbconn.query(
     "DELETE FROM transactions WHERE stock_id = ?",
     [stockId],
@@ -115,6 +91,7 @@ router.delete("/:stockId", (req, res) => {
           .json({ success: false, message: "Failed to delete transaction(s)" });
       }
 
+      // Check if there is anymore transactions with same stock_id
       dbconn.query(
         "SELECT * FROM transactions WHERE stock_id = ?",
         [stockId],
@@ -126,6 +103,7 @@ router.delete("/:stockId", (req, res) => {
             });
           }
 
+          // if none, delete stock from stocks table.
           if (remainingTransactions.length === 0) {
             dbconn.query(
               "DELETE FROM stocks WHERE id = ?",

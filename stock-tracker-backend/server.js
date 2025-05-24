@@ -10,12 +10,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Routes
-// app.get("/", (req, res) => res.send("Hello, Express... cool!"));
-// app.get("/api/communicate", (req, res) =>
-//   res.send("Hello user! You have communicated with the server")
-// );
-// app.get("/form", (req, res) => res.send("Form is sent"));
+// Routes for testing
+app.get("/", (req, res) => {
+  res.send("Hello, Express... cool!");
+});
+
+app.get("/api/communicate", async (req, res) => {
+  res.send("Hello user! You have communicated with the server");
+});
 
 // Modular routes
 app.use("/api/stocks", require("./routes/stockRoutes"));

@@ -22,17 +22,17 @@ const NewUser = () => {
 
     try {
       const data = await registerUser(name, email);
-
       if (data.success) {
         console.log("User registered successfully!");
+        const id = data.user.id;
         // Save user in authentication context
-        login({ name, email });
+        login({ id, name, email });
         navigate("/dashboard"); // Redirect to dashboard on success
       } else {
         setError("Email already exists.");
       }
-    } catch (error) {
-      setError("An error occurred. Please try again later.");
+    } catch (err) {
+      setError("Error registering user. Please try again later.");
     }
   };
 

@@ -12,7 +12,7 @@ function Form({ title }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  const { setStocks } = useContext(StockContext);
+  const { setStockList } = useContext(StockContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,10 +20,10 @@ function Form({ title }) {
     setSuccessMessage(null);
 
     try {
-      const email = user.email;
+      const id = user.id;
 
       const response = await addStockTransaction(
-        email,
+        id,
         symbol,
         quantity,
         purchasePrice
@@ -31,7 +31,7 @@ function Form({ title }) {
 
       if (response.success) {
         setSuccessMessage("Stock transaction added successfully!");
-        setStocks(response.stocks); // update stock list
+        setStockList(response.stocks); // update stock list
       }
 
       setSymbol("");

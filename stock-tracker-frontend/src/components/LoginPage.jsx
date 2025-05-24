@@ -14,9 +14,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user && !name) {
-      logout(); // Only log out if a user exists
+      logout(); // Log out if a user is logged in
     }
-  }, [user, name]);
+  }, [user, name, logout]);
 
   const handleLogin = async () => {
     if (!name.trim() || !email.trim()) {
@@ -26,17 +26,18 @@ const LoginPage = () => {
 
     try {
       const data = await authenticateLogin(name, email);
-
       if (data.success) {
-        login({ name, email });
+        const id = data.user.id;
+        login({ id, name, email });
         console.log("Navigating to /dashboard");
 
         navigate("/dashboard");
       } else {
-        setError("Invalid username or email.");
+        // "Invalid username or email" message received from backend
+        setError(data.message);
       }
-    } catch (error) {
-      setError("An error occurred. Please try again later.");
+    } catch (err) {
+      setError(`Error logging in. Please try again later. ${err}`);
     }
   };
 

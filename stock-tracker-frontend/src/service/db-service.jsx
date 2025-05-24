@@ -13,6 +13,7 @@ const authenticateLogin = async (name, email) => {
     }
 
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Login request failed:", error);
@@ -33,6 +34,7 @@ const registerUser = async (name, email) => {
     }
 
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Registration failed:", error);
@@ -40,13 +42,13 @@ const registerUser = async (name, email) => {
   }
 };
 
-const addStockTransaction = async (email, symbol, quantity, purchasePrice) => {
+const addStockTransaction = async (id, symbol, quantity, purchasePrice) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/stocks/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email,
+        id,
         symbol,
         quantity,
         purchasePrice,
@@ -81,14 +83,14 @@ const addStockTransaction = async (email, symbol, quantity, purchasePrice) => {
 //   }
 // };
 
-const fetchUserStocks = async (email) => {
+const fetchUserStocks = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/stocks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ id }),
     });
 
     return await response.json();
@@ -105,6 +107,7 @@ const deleteStock = async (stockId) => {
   });
 
   const data = await response.json();
+  console.log(data);
   return data;
 };
 
@@ -112,7 +115,6 @@ export {
   authenticateLogin,
   registerUser,
   addStockTransaction,
-  // getStocksWithTransactions,
   fetchUserStocks,
   deleteStock,
 };
