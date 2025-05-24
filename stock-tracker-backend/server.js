@@ -1,6 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+// const express = require("express");
+import express from "express";
+// const cors = require("cors");
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
+import stockRoutes from "./routes/stockRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 const PORT = 5000;
@@ -20,8 +26,8 @@ app.get("/api/communicate", async (req, res) => {
 });
 
 // Modular routes
-app.use("/api/stocks", require("./routes/stockRoutes"));
-app.use("/api/user", require("./routes/authRoutes"));
+app.use("/api/stocks", stockRoutes);
+app.use("/api/user", authRoutes);
 
 // Start server
 app.listen(PORT, () => {

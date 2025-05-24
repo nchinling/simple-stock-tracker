@@ -1,8 +1,8 @@
-// routes/stockRoutes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const dbconn = require("../config/db");
-const yahooFinance = require("yahoo-finance2").default;
+
+import dbconn from "../config/db.js";
+import addStockListWithPrices from "../services/addStockPrices.js";
 
 // Fetch stocks
 router.post("/", (req, res) => {
@@ -15,14 +15,25 @@ router.post("/", (req, res) => {
       JOIN transactions t ON s.id = t.stock_id
       WHERE s.user_id = ?`;
 
-  dbconn.query(query, [user_id], (err, stocks) => {
+  dbconn.query(query, [user_id], async (err, stocks) => {
     if (err) {
       return res
         .status(500)
         .json({ success: false, message: "Failed to fetch stocks" });
     }
 
-    res.json({ success: true, stocks });
+    // res.json({ success: true, stocks });
+
+    // retrieve stock prices
+    try {
+      const enrichedStocks = await addStockListWithPrices(stocks);
+      res.json({ success: true, stocks: enrichedStocks });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch stock prices",
+      });
+    }
   });
 });
 
@@ -133,4 +144,4 @@ router.delete("/:stockId", (req, res) => {
   );
 });
 
-module.exports = router;
+export default router;

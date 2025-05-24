@@ -1,7 +1,6 @@
-// routes/authRoutes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const dbconn = require("../config/db");
+import dbconn from "../config/db.js";
 
 router.post("/login", (req, res) => {
   const { name, email } = req.body;
@@ -22,28 +21,6 @@ router.post("/login", (req, res) => {
     }
   );
 });
-
-// router.post("/register", (req, res) => {
-//   const { name, email } = req.body;
-
-//   dbconn.query(
-//     "INSERT INTO users (name, email) VALUES (?, ?)",
-//     [name, email],
-//     (err) => {
-//       if (err) {
-//         if (err.code === "ER_DUP_ENTRY") {
-//           return res
-//             .status(409)
-//             .json({ success: false, message: "Email already exists." });
-//         }
-//         return res
-//           .status(500)
-//           .json({ success: false, message: "Database error." });
-//       }
-//       res.json({ success: true, message: "User registered successfully" });
-//     }
-//   );
-// });
 
 router.post("/register", (req, res) => {
   const { name, email } = req.body;
@@ -84,4 +61,4 @@ router.post("/register", (req, res) => {
   );
 });
 
-module.exports = router;
+export default router;
