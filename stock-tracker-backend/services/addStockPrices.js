@@ -7,19 +7,21 @@ async function addStockListWithPrices(stocks) {
 
     const prices = await yahooFinance.quote(symbolsArray);
 
+    // Create JavaScript object {key(symbol):value(price)}
     const priceMap = Array.isArray(prices)
       ? Object.fromEntries(prices.map((p) => [p.symbol, p.regularMarketPrice]))
       : { [prices.symbol]: prices.regularMarketPrice };
 
-    const enrichedStocks = stocks.map((stock) => ({
-      ...stock,
+    // Append price to stock list
+    const stockListWithPrices = stocks.map((stock) => ({
+      ...stock, // copy original stock object
       currentPrice: priceMap[stock.symbol] || null,
     }));
 
-    return enrichedStocks;
+    return stockListWithPrices;
   } catch (error) {
-    console.error("Yahoo Finance error:", error);
-    throw new Error("Failed to fetch stock prices");
+    console.log(`Yahoo finance error: ${error.message}`);
+    throw new Error(error.message || "Failed to fetch stock prices");
   }
 }
 

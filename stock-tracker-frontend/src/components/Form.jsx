@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { addStockTransaction } from "../service/db-service";
+import { addStockTransaction, fetchUserStocks } from "../service/db-service";
 import { AuthContext } from "../contexts/AuthContext";
 import { StockContext } from "../contexts/StockContext";
 import "./styles/Form.css";
@@ -22,23 +22,20 @@ function Form({ title }) {
     try {
       const id = user.id;
 
-      const response = await addStockTransaction(
-        id,
-        symbol,
-        quantity,
-        purchasePrice
-      );
+      // wait for completion
+      await addStockTransaction(id, symbol, quantity, purchasePrice);
 
-      if (response.success) {
-        setSuccessMessage("Stock transaction added successfully!");
-        setStockList(response.stocks); // update stock list
+      const updatedStockList = await fetchUserStocks(user.id);
+      if (updatedStockList.success) {
+        setSuccessMessage("Stock transaction list fetched successfully");
+        setStockList(updatedStockList.stocks);
       }
 
       setSymbol("");
       setQuantity("");
       setPurchasePrice("");
     } catch (err) {
-      setError("Error submitting transaction. Please try again.");
+      setError(`Error submitting transaction. Please try again. ${err}`);
     }
   };
 

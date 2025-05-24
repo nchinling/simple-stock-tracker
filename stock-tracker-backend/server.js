@@ -1,6 +1,4 @@
-// const express = require("express");
 import express from "express";
-// const cors = require("cors");
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
@@ -11,9 +9,8 @@ import authRoutes from "./routes/authRoutes.js";
 const app = express();
 const PORT = 5000;
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Parse incoming JSON payloads
+app.use(express.urlencoded({ extended: true })); // Parse incoming form payloads
 app.use(cors());
 
 // Routes for testing

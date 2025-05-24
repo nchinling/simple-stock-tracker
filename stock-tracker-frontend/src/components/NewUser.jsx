@@ -32,7 +32,7 @@ const NewUser = () => {
         setError("Email already exists.");
       }
     } catch (err) {
-      setError("Error registering user. Please try again later.");
+      setError(`Error registering user. Please try again later. ${err}`);
     }
   };
 

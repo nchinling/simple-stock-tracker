@@ -13,9 +13,11 @@ const StockPage = () => {
   useEffect(() => {
     if (user?.id) {
       // Fetch user's stocks from backend
+      console.log("useEffect is called");
       fetchUserStocks(user.id)
         .then((data) => {
-          if (data.success) {
+          if (data.stocks) {
+            console.log(data.stocks);
             setStockList(data.stocks);
           } else {
             console.error("Failed to fetch stocks");

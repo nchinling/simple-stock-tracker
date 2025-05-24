@@ -49,7 +49,20 @@ function StockList({ title }) {
                 <td>{stock.quantity}</td>
                 <td>{stock.purchasePrice}</td>
                 <td>{stock.currentPrice}</td>
-                <td>Placeholder</td>
+                {/* <td>placeholder</td> */}
+                <td
+                  style={{
+                    color: stock.profitOrLoss >= 0 ? "green" : "red",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {stock.profitOrLoss >= 0 ? "▲" : "▼"}
+                  {" $"}
+                  {Math.abs(stock.profitOrLoss).toFixed(2)}
+                  {" ("}
+                  {Math.abs(stock.percentagePnL).toFixed(2)}
+                  {"%)"}
+                </td>
                 <td>
                   <button
                     className="delete-button"

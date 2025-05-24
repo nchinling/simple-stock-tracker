@@ -67,22 +67,6 @@ const addStockTransaction = async (id, symbol, quantity, purchasePrice) => {
   }
 };
 
-// const getStocksWithTransactions = async (userId) => {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/api/stocks/${userId}`);
-
-//     if (!response.ok) {
-//       throw new Error("Failed to fetch stock transactions.");
-//     }
-
-//     const data = await response.json();
-//     return data.stocks; // Returns stock + transaction data
-//   } catch (error) {
-//     console.error("Error fetching stock transactions:", error);
-//     throw error;
-//   }
-// };
-
 const fetchUserStocks = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/stocks`, {
@@ -92,7 +76,6 @@ const fetchUserStocks = async (id) => {
       },
       body: JSON.stringify({ id }),
     });
-
     return await response.json();
   } catch (error) {
     console.error("API error:", error);

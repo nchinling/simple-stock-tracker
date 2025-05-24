@@ -3,6 +3,7 @@ const router = express.Router();
 
 import dbconn from "../config/db.js";
 import addStockListWithPrices from "../services/addStockPrices.js";
+import calculatePnL from "../services/calculatePnL.js";
 
 // Fetch stocks
 router.post("/", (req, res) => {
@@ -22,12 +23,16 @@ router.post("/", (req, res) => {
         .json({ success: false, message: "Failed to fetch stocks" });
     }
 
+    // Partcipants
     // res.json({ success: true, stocks });
 
-    // retrieve stock prices
+    // Actual: retrieve stock prices
     try {
-      const enrichedStocks = await addStockListWithPrices(stocks);
-      res.json({ success: true, stocks: enrichedStocks });
+      const stockListWithPrices = await addStockListWithPrices(stocks);
+
+      // Activity 2: Calculate PnL
+      const stockListWithPnLandPrices = calculatePnL(stockListWithPrices);
+      res.json({ success: true, stocks: stockListWithPnLandPrices });
     } catch (error) {
       res.status(500).json({
         success: false,
